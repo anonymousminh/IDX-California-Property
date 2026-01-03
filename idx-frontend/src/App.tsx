@@ -642,58 +642,162 @@ function App() {
         <div className="min-h-screen" style={{position: 'relative'}}>
             {/* Header */}
             <header style={{
-                background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%)',
-                color: 'white',
-                padding: '3rem 0 4rem',
-                boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-                marginBottom: '3rem',
                 position: 'relative',
+                padding: '4rem 0 5rem',
+                marginBottom: '3rem',
                 overflow: 'hidden'
             }}>
-                {/* Decorative Elements */}
+                {/* Glass morphism overlay */}
                 <div style={{
                     position: 'absolute',
-                    top: '-50%',
-                    right: '-10%',
-                    width: '600px',
-                    height: '600px',
-                    background: 'radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)',
-                    borderRadius: '50%'
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(20px)',
+                    WebkitBackdropFilter: 'blur(20px)',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+                }}></div>
+                
+                {/* Animated wave decoration */}
+                <div style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: '100px',
+                    background: 'linear-gradient(to top, rgba(255, 255, 255, 0.1) 0%, transparent 100%)',
+                    clipPath: 'polygon(0 30%, 100% 20%, 100% 100%, 0% 100%)'
+                }}></div>
+                
+                {/* Floating decorative elements */}
+                <div style={{
+                    position: 'absolute',
+                    top: '20%',
+                    left: '10%',
+                    width: '80px',
+                    height: '80px',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '50%',
+                    backdropFilter: 'blur(10px)',
+                    animation: 'float 6s ease-in-out infinite'
                 }}></div>
                 <div style={{
                     position: 'absolute',
-                    bottom: '-30%',
-                    left: '-5%',
-                    width: '400px',
-                    height: '400px',
-                    background: 'radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%)',
-                    borderRadius: '50%'
+                    top: '30%',
+                    right: '15%',
+                    width: '60px',
+                    height: '60px',
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    borderRadius: '50%',
+                    backdropFilter: 'blur(10px)',
+                    animation: 'float 8s ease-in-out infinite reverse'
+                }}></div>
+                <div style={{
+                    position: 'absolute',
+                    bottom: '20%',
+                    left: '20%',
+                    width: '100px',
+                    height: '100px',
+                    background: 'rgba(255, 255, 255, 0.06)',
+                    borderRadius: '50%',
+                    backdropFilter: 'blur(10px)',
+                    animation: 'float 7s ease-in-out infinite'
                 }}></div>
                 
                 <div style={{maxWidth: '1600px', margin: '0 auto', padding: '0 1rem', textAlign: 'center', position: 'relative', zIndex: 1}}>
+                    {/* Logo/Icon with creative styling */}
                     <div style={{
-                        display: 'inline-block',
-                        fontSize: '4rem',
-                        marginBottom: '1rem',
-                        filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.2))'
-                    }}>🏡</div>
-                    <h1 style={{
-                        fontSize: 'clamp(2rem, 5vw, 3.5rem)',
-                        fontWeight: 700,
-                        marginBottom: '0.75rem',
-                        letterSpacing: '-0.02em',
-                        textShadow: '0 2px 10px rgba(0,0,0,0.2)',
-                        lineHeight: '1.2'
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginBottom: '1.5rem',
+                        position: 'relative'
                     }}>
-                        Find Your Dream Home in California
+                        <div style={{
+                            width: '100px',
+                            height: '100px',
+                            background: 'rgba(255, 255, 255, 0.2)',
+                            backdropFilter: 'blur(20px)',
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+                            border: '2px solid rgba(255, 255, 255, 0.3)'
+                        }}>
+                            <span style={{fontSize: '3.5rem', filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.2))'}}>🏡</span>
+                        </div>
+                        {/* Decorative rings */}
+                        <div style={{
+                            position: 'absolute',
+                            width: '120px',
+                            height: '120px',
+                            border: '2px solid rgba(255, 255, 255, 0.2)',
+                            borderRadius: '50%',
+                            animation: 'pulse 3s ease-in-out infinite'
+                        }}></div>
+                    </div>
+                    
+                    {/* Creative Title */}
+                    <h1 style={{
+                        fontSize: 'clamp(2.5rem, 6vw, 4.5rem)',
+                        fontWeight: 800,
+                        marginBottom: '1rem',
+                        letterSpacing: '-0.03em',
+                        lineHeight: '1.1',
+                        background: 'linear-gradient(135deg, #ffffff 0%, #f0f9ff 50%, #ffffff 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                        textShadow: '0 4px 20px rgba(255, 255, 255, 0.3)',
+                        margin: '0 auto 1rem'
+                    }}>
+                        Find Your Dream Home
                     </h1>
+                    
+                    {/* Subtitle with accent */}
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '1rem',
+                        marginBottom: '1.5rem',
+                        flexWrap: 'wrap'
+                    }}>
+                        <div style={{
+                            width: '60px',
+                            height: '2px',
+                            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent)'
+                        }}></div>
+                        <p style={{
+                            fontSize: 'clamp(1.125rem, 2vw, 1.5rem)',
+                            fontWeight: 300,
+                            color: 'rgba(255, 255, 255, 0.95)',
+                            textShadow: '0 2px 10px rgba(0,0,0,0.2)',
+                            letterSpacing: '0.05em',
+                            textTransform: 'uppercase'
+                        }}>
+                            in California
+                        </p>
+                        <div style={{
+                            width: '60px',
+                            height: '2px',
+                            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent)'
+                        }}></div>
+                    </div>
+                    
+                    {/* Tagline */}
                     <p style={{
-                        fontSize: '1.25rem',
-                        opacity: 0.95,
+                        fontSize: '1.125rem',
                         fontWeight: 400,
-                        maxWidth: '600px',
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        maxWidth: '700px',
                         margin: '0 auto',
-                        textShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                        textShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                        lineHeight: '1.6'
                     }}>
                         Discover beautiful properties across the Golden State
                     </p>
@@ -865,21 +969,117 @@ function App() {
 
                         {/* Pagination */}
                         {pageInfo.totalPages > 1 && (
-                            <div className="flex justify-center items-center gap-6">
+                            <div style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                gap: '2rem',
+                                marginTop: '3rem',
+                                padding: '1rem 0'
+                            }}>
                                 <button
                                     onClick={() => handlePageChange(pageInfo.currentPage - 1)}
                                     disabled={pageInfo.currentPage === 0}
-                                    className="px-4 py-2 bg-blue-600 text-white rounded disabled:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
+                                    style={{
+                                        padding: '0.625rem 1.25rem',
+                                        background: pageInfo.currentPage === 0 ? '#e5e7eb' : '#3b82f6',
+                                        color: pageInfo.currentPage === 0 ? '#9ca3af' : 'white',
+                                        border: 'none',
+                                        borderRadius: '8px',
+                                        fontWeight: 600,
+                                        fontSize: '0.9375rem',
+                                        cursor: pageInfo.currentPage === 0 ? 'not-allowed' : 'pointer',
+                                        transition: 'all 0.2s ease',
+                                        boxShadow: pageInfo.currentPage === 0 ? 'none' : '0 2px 4px rgba(0, 0, 0, 0.1)'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        if (pageInfo.currentPage > 0) {
+                                            e.currentTarget.style.background = '#2563eb';
+                                            e.currentTarget.style.transform = 'translateY(-1px)';
+                                            e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+                                        }
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        if (pageInfo.currentPage > 0) {
+                                            e.currentTarget.style.background = '#3b82f6';
+                                            e.currentTarget.style.transform = 'translateY(0)';
+                                            e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+                                        }
+                                    }}
                                 >
                                     Previous
                                 </button>
-                                <span className="text-white font-medium">
-                                    Page {pageInfo.currentPage + 1} of {pageInfo.totalPages}
-                                </span>
+                                
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.75rem',
+                                    padding: '0.625rem 1.5rem',
+                                    background: 'white',
+                                    borderRadius: '8px',
+                                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                                    border: '1px solid #e5e7eb'
+                                }}>
+                                    <span style={{
+                                        color: '#374151',
+                                        fontSize: '0.9375rem',
+                                        fontWeight: 500
+                                    }}>
+                                        Page
+                                    </span>
+                                    <span style={{
+                                        color: '#1f2937',
+                                        fontSize: '1rem',
+                                        fontWeight: 700,
+                                        minWidth: '40px',
+                                        textAlign: 'center'
+                                    }}>
+                                        {pageInfo.currentPage + 1}
+                                    </span>
+                                    <span style={{
+                                        color: '#6b7280',
+                                        fontSize: '0.9375rem'
+                                    }}>
+                                        of
+                                    </span>
+                                    <span style={{
+                                        color: '#1f2937',
+                                        fontSize: '1rem',
+                                        fontWeight: 700
+                                    }}>
+                                        {pageInfo.totalPages.toLocaleString()}
+                                    </span>
+                                </div>
+                                
                                 <button
                                     onClick={() => handlePageChange(pageInfo.currentPage + 1)}
                                     disabled={pageInfo.currentPage >= pageInfo.totalPages - 1}
-                                    className="px-4 py-2 bg-blue-600 text-white rounded disabled:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
+                                    style={{
+                                        padding: '0.625rem 1.25rem',
+                                        background: pageInfo.currentPage >= pageInfo.totalPages - 1 ? '#e5e7eb' : '#3b82f6',
+                                        color: pageInfo.currentPage >= pageInfo.totalPages - 1 ? '#9ca3af' : 'white',
+                                        border: 'none',
+                                        borderRadius: '8px',
+                                        fontWeight: 600,
+                                        fontSize: '0.9375rem',
+                                        cursor: pageInfo.currentPage >= pageInfo.totalPages - 1 ? 'not-allowed' : 'pointer',
+                                        transition: 'all 0.2s ease',
+                                        boxShadow: pageInfo.currentPage >= pageInfo.totalPages - 1 ? 'none' : '0 2px 4px rgba(0, 0, 0, 0.1)'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        if (pageInfo.currentPage < pageInfo.totalPages - 1) {
+                                            e.currentTarget.style.background = '#2563eb';
+                                            e.currentTarget.style.transform = 'translateY(-1px)';
+                                            e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.15)';
+                                        }
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        if (pageInfo.currentPage < pageInfo.totalPages - 1) {
+                                            e.currentTarget.style.background = '#3b82f6';
+                                            e.currentTarget.style.transform = 'translateY(0)';
+                                            e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+                                        }
+                                    }}
                                 >
                                     Next
                                 </button>
@@ -905,6 +1105,214 @@ function App() {
                     onClose={() => setSelectedProperty(null)}
                 />
             )}
+
+            {/* Footer */}
+            <footer style={{
+                position: 'relative',
+                padding: '4rem 0 3rem',
+                marginTop: '5rem',
+                overflow: 'hidden'
+            }}>
+                {/* Glass morphism overlay */}
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(20px)',
+                    WebkitBackdropFilter: 'blur(20px)',
+                    borderTop: '1px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: '0 -8px 32px rgba(0, 0, 0, 0.1)'
+                }}></div>
+                
+                {/* Animated wave decoration at top */}
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '100px',
+                    background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 0%, transparent 100%)',
+                    clipPath: 'polygon(0 0, 100% 0, 100% 80%, 0 70%)'
+                }}></div>
+                
+                {/* Floating decorative elements */}
+                <div style={{
+                    position: 'absolute',
+                    bottom: '30%',
+                    left: '15%',
+                    width: '60px',
+                    height: '60px',
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    borderRadius: '50%',
+                    backdropFilter: 'blur(10px)',
+                    animation: 'float 7s ease-in-out infinite'
+                }}></div>
+                <div style={{
+                    position: 'absolute',
+                    bottom: '20%',
+                    right: '12%',
+                    width: '80px',
+                    height: '80px',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    borderRadius: '50%',
+                    backdropFilter: 'blur(10px)',
+                    animation: 'float 8s ease-in-out infinite reverse'
+                }}></div>
+                <div style={{
+                    position: 'absolute',
+                    top: '25%',
+                    right: '25%',
+                    width: '50px',
+                    height: '50px',
+                    background: 'rgba(255, 255, 255, 0.06)',
+                    borderRadius: '50%',
+                    backdropFilter: 'blur(10px)',
+                    animation: 'float 6s ease-in-out infinite'
+                }}></div>
+                
+                <div style={{maxWidth: '1600px', margin: '0 auto', padding: '0 1rem', position: 'relative', zIndex: 1}}>
+                    {/* Footer Content Grid */}
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                        gap: '3rem',
+                        marginBottom: '3rem',
+                        textAlign: 'center'
+                    }}>
+                        {/* Brand Section */}
+                        <div>
+                            <div style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                marginBottom: '1rem'
+                            }}>
+                                <div style={{
+                                    width: '60px',
+                                    height: '60px',
+                                    background: 'rgba(255, 255, 255, 0.2)',
+                                    backdropFilter: 'blur(20px)',
+                                    borderRadius: '50%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+                                    border: '2px solid rgba(255, 255, 255, 0.3)'
+                                }}>
+                                    <span style={{fontSize: '2rem'}}>🏡</span>
+                                </div>
+                            </div>
+                            <h3 style={{
+                                fontSize: '1.5rem',
+                                fontWeight: 700,
+                                color: 'rgba(255, 255, 255, 0.95)',
+                                marginBottom: '0.5rem',
+                                textShadow: '0 2px 8px rgba(0,0,0,0.2)'
+                            }}>
+                                California Real Estate
+                            </h3>
+                            <p style={{
+                                fontSize: '0.95rem',
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                textShadow: '0 1px 4px rgba(0,0,0,0.15)'
+                            }}>
+                                Your dream home awaits
+                            </p>
+                        </div>
+                        
+                        {/* Quick Links */}
+                        <div>
+                            <h4 style={{
+                                fontSize: '1.125rem',
+                                fontWeight: 600,
+                                color: 'rgba(255, 255, 255, 0.95)',
+                                marginBottom: '1rem',
+                                textShadow: '0 2px 6px rgba(0,0,0,0.2)'
+                            }}>
+                                Quick Links
+                            </h4>
+                            <ul style={{
+                                listStyle: 'none',
+                                padding: 0,
+                                margin: 0,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '0.75rem'
+                            }}>
+                                {['Browse Properties', 'About Us', 'Contact', 'FAQs'].map((link) => (
+                                    <li key={link}>
+                                        <a href="#" style={{
+                                            color: 'rgba(255, 255, 255, 0.8)',
+                                            textDecoration: 'none',
+                                            fontSize: '0.95rem',
+                                            transition: 'all 0.2s ease',
+                                            display: 'inline-block',
+                                            textShadow: '0 1px 3px rgba(0,0,0,0.15)'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.color = 'rgba(255, 255, 255, 1)';
+                                            e.currentTarget.style.transform = 'translateX(5px)';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)';
+                                            e.currentTarget.style.transform = 'translateX(0)';
+                                        }}>
+                                            {link}
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                        
+                        {/* Contact Info */}
+                        <div>
+                            <h4 style={{
+                                fontSize: '1.125rem',
+                                fontWeight: 600,
+                                color: 'rgba(255, 255, 255, 0.95)',
+                                marginBottom: '1rem',
+                                textShadow: '0 2px 6px rgba(0,0,0,0.2)'
+                            }}>
+                                Contact
+                            </h4>
+                            <div style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '0.75rem',
+                                fontSize: '0.95rem',
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                textShadow: '0 1px 3px rgba(0,0,0,0.15)'
+                            }}>
+                                <div>📍 1555 W Shoreline Dr Ste 100, Boise, Idaho 83702</div>
+                                <div>📞 (650) 209-0551</div>
+                                <div>✉️ info@idxexchange.com</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {/* Divider */}
+                    <div style={{
+                        height: '1px',
+                        background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
+                        marginBottom: '2rem'
+                    }}></div>
+                    
+                    {/* Copyright */}
+                    <div style={{
+                        textAlign: 'center',
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        fontSize: '0.875rem',
+                        textShadow: '0 1px 3px rgba(0,0,0,0.15)'
+                    }}>
+                        <p style={{margin: 0}}>
+                            © {new Date().getFullYear()} IDX Exchange. All rights reserved.
+                        </p>
+                    </div>
+                </div>
+            </footer>
         </div>
     );
 }
