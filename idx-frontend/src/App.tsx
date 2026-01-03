@@ -639,162 +639,190 @@ function App() {
     };
 
     return (
-        <div className="min-h-screen" style={{backgroundColor: '#f5f7fa'}}>
+        <div className="min-h-screen" style={{position: 'relative'}}>
             {/* Header */}
             <header style={{
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%)',
                 color: 'white',
-                padding: '2rem 0',
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-                marginBottom: '2rem'
+                padding: '3rem 0 4rem',
+                boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                marginBottom: '3rem',
+                position: 'relative',
+                overflow: 'hidden'
             }}>
-                <div style={{maxWidth: '1600px', margin: '0 auto', padding: '0 1rem'}}>
-                    <h1 style={{fontSize: '2.5rem', fontWeight: 800, marginBottom: '0.5rem', letterSpacing: '-0.025em'}}>
-                        🏠 IDX Real Estate
+                {/* Decorative Elements */}
+                <div style={{
+                    position: 'absolute',
+                    top: '-50%',
+                    right: '-10%',
+                    width: '600px',
+                    height: '600px',
+                    background: 'radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)',
+                    borderRadius: '50%'
+                }}></div>
+                <div style={{
+                    position: 'absolute',
+                    bottom: '-30%',
+                    left: '-5%',
+                    width: '400px',
+                    height: '400px',
+                    background: 'radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%)',
+                    borderRadius: '50%'
+                }}></div>
+                
+                <div style={{maxWidth: '1600px', margin: '0 auto', padding: '0 1rem', textAlign: 'center', position: 'relative', zIndex: 1}}>
+                    <div style={{
+                        display: 'inline-block',
+                        fontSize: '4rem',
+                        marginBottom: '1rem',
+                        filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.2))'
+                    }}>🏡</div>
+                    <h1 style={{
+                        fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+                        fontWeight: 700,
+                        marginBottom: '0.75rem',
+                        letterSpacing: '-0.02em',
+                        textShadow: '0 2px 10px rgba(0,0,0,0.2)',
+                        lineHeight: '1.2'
+                    }}>
+                        Find Your Dream Home in California
                     </h1>
-                    <p style={{fontSize: '1.125rem', opacity: 0.95, fontWeight: 500}}>Find your dream home</p>
+                    <p style={{
+                        fontSize: '1.25rem',
+                        opacity: 0.95,
+                        fontWeight: 400,
+                        maxWidth: '600px',
+                        margin: '0 auto',
+                        textShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                    }}>
+                        Discover beautiful properties across the Golden State
+                    </p>
                 </div>
             </header>
 
             {/* Main Content */}
             <main style={{maxWidth: '1600px', margin: '0 auto', padding: '0 1rem 2rem'}}>
-                {/* Filters */}
-                <div style={{
-                    backgroundColor: 'white',
-                    borderRadius: '16px',
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-                    padding: '2rem',
-                    marginBottom: '2rem',
-                    border: '1px solid rgba(0, 0, 0, 0.05)'
-                }}>
-                    <h2 style={{fontSize: '1.5rem', fontWeight: 700, marginBottom: '1.5rem', color: '#111827'}}>🔍 Search Filters</h2>
+                {/* Filters Container */}
+                <div className="filter-container mb-8">
+                    {/* Main Search Input */}
+                    <div className="mb-5" style={{position: 'relative'}}>
+                        <div style={{
+                            position: 'absolute',
+                            left: '1.25rem',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            fontSize: '1.25rem',
+                            zIndex: 1
+                        }}>🔍</div>
+                        <input
+                            type="text"
+                            placeholder="Search by city or any property detail (address, zip, price, beds, etc.)"
+                            className="search-input-main"
+                            style={{
+                                width: '100%',
+                                padding: '1.125rem 1.25rem 1.125rem 3.5rem',
+                                fontSize: '1.05rem',
+                                borderRadius: '14px',
+                                border: '2px solid #e5e7eb',
+                                outline: 'none',
+                                transition: 'all 0.3s ease',
+                                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
+                                background: 'linear-gradient(to bottom, #ffffff 0%, #fafbfc 100%)'
+                            }}
+                            onFocus={(e) => {
+                                e.target.style.borderColor = '#3b82f6';
+                                e.target.style.boxShadow = '0 4px 16px rgba(59, 130, 246, 0.15), 0 0 0 4px rgba(59, 130, 246, 0.1)';
+                                e.target.style.background = '#ffffff';
+                            }}
+                            onBlur={(e) => {
+                                e.target.style.borderColor = '#e5e7eb';
+                                e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.06)';
+                                e.target.style.background = 'linear-gradient(to bottom, #ffffff 0%, #fafbfc 100%)';
+                            }}
+                        />
+                    </div>
 
-                    {/* Location Filters */}
-                    <div className="mb-4">
-                        <h3 className="text-sm font-semibold text-gray-700 mb-2">Location</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {/* Filter Cards Grid */}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-4">
+                        <div className="filter-card">
                             <input
                                 type="text"
-                                placeholder="City (e.g., Provo)"
+                                placeholder="City"
                                 value={filters.city || ''}
                                 onChange={e => handleFilterChange('city', e.target.value)}
-                                style={{
-                                    border: '1px solid #d1d5db',
-                                    borderRadius: '8px',
-                                    padding: '0.75rem 1rem',
-                                    fontSize: '0.95rem',
-                                    width: '100%',
-                                    transition: 'all 0.2s',
-                                    outline: 'none'
-                                }}
-                                onFocus={(e) => e.target.style.borderColor = '#667eea'}
-                                onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
+                                className="filter-input-card"
                             />
+                        </div>
+                        
+                        <div className="filter-card">
                             <input
                                 type="text"
-                                placeholder="State (e.g., Utah)"
-                                value={filters.state || ''}
-                                onChange={e => handleFilterChange('state', e.target.value)}
-                                className="border rounded px-3 py-2"
-                            />
-                            <input
-                                type="text"
-                                placeholder="Zip Code"
+                                placeholder="ZIP Code"
                                 value={filters.zip || ''}
                                 onChange={e => handleFilterChange('zip', e.target.value)}
-                                className="border rounded px-3 py-2"
+                                className="filter-input-card"
                             />
                         </div>
-                    </div>
-
-                    {/* Price Filters */}
-                    <div className="mb-4">
-                        <h3 className="text-sm font-semibold text-gray-700 mb-2">Price Range</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        
+                        <div className="filter-card">
                             <input
                                 type="number"
-                                placeholder="Min Price (e.g., 300000)"
+                                placeholder="Min Price"
                                 value={filters.minPrice || ''}
                                 onChange={e => handleFilterChange('minPrice', e.target.value ? Number(e.target.value) : undefined)}
-                                className="border rounded px-3 py-2"
+                                className="filter-input-card"
                             />
+                        </div>
+                        
+                        <div className="filter-card">
                             <input
                                 type="number"
-                                placeholder="Max Price (e.g., 500000)"
+                                placeholder="Max Price"
                                 value={filters.maxPrice || ''}
                                 onChange={e => handleFilterChange('maxPrice', e.target.value ? Number(e.target.value) : undefined)}
-                                className="border rounded px-3 py-2"
+                                className="filter-input-card"
                             />
                         </div>
-                    </div>
-
-                    {/* Bedroom Filters */}
-                    <div className="mb-4">
-                        <h3 className="text-sm font-semibold text-gray-700 mb-2">Bedrooms</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        
+                        <div className="filter-card">
                             <input
                                 type="number"
-                                placeholder="Exact Beds (e.g., 3)"
+                                placeholder="Bedrooms"
                                 value={filters.beds || ''}
                                 onChange={e => handleFilterChange('beds', e.target.value ? Number(e.target.value) : undefined)}
-                                className="border rounded px-3 py-2"
-                            />
-                            <input
-                                type="number"
-                                placeholder="Min Beds (e.g., 3+)"
-                                value={filters.minBeds || ''}
-                                onChange={e => handleFilterChange('minBeds', e.target.value ? Number(e.target.value) : undefined)}
-                                className="border rounded px-3 py-2"
+                                className="filter-input-card"
+                                min="0"
                             />
                         </div>
-                    </div>
-
-                    {/* Bathroom Filters */}
-                    <div className="mb-4">
-                        <h3 className="text-sm font-semibold text-gray-700 mb-2">Bathrooms</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        
+                        <div className="filter-card">
                             <input
                                 type="number"
-                                placeholder="Exact Baths (e.g., 2)"
+                                placeholder="Bathrooms"
                                 value={filters.baths || ''}
                                 onChange={e => handleFilterChange('baths', e.target.value ? Number(e.target.value) : undefined)}
-                                className="border rounded px-3 py-2"
-                            />
-                            <input
-                                type="number"
-                                placeholder="Min Baths (e.g., 2+)"
-                                value={filters.minBaths || ''}
-                                onChange={e => handleFilterChange('minBaths', e.target.value ? Number(e.target.value) : undefined)}
-                                className="border rounded px-3 py-2"
+                                className="filter-input-card"
+                                min="0"
+                                step="0.5"
                             />
                         </div>
                     </div>
 
-                    {/* Sort */}
-                    <div className="mb-4">
-                        <h3 className="text-sm font-semibold text-gray-700 mb-2">Sort By</h3>
-                        <select
-                            value={filters.sort || ''}
-                            onChange={e => handleFilterChange('sort', e.target.value)}
-                            className="border rounded px-3 py-2 w-full md:w-auto"
+                    {/* Action Buttons Row */}
+                    <div className="flex gap-3 flex-wrap">
+                        <button
+                            onClick={() => fetchProperties()}
+                            className="filter-button px-6 py-2.5"
                         >
-                            <option value="">Default</option>
-                            <option value="price,asc">Price: Low to High</option>
-                            <option value="price,desc">Price: High to Low</option>
-                            <option value="city,asc">City: A to Z</option>
-                            <option value="city,desc">City: Z to A</option>
-                            <option value="bedrooms,desc">Most Bedrooms</option>
-                            <option value="bathrooms,desc">Most Bathrooms</option>
-                            <option value="squareFeet,desc">Largest Sq Ft</option>
-                        </select>
+                            Search Properties
+                        </button>
+                        <button
+                            onClick={() => setFilters({ page: 0, size: 20, city: '', state: '', zip: '', sort: '' })}
+                            className="filter-button-secondary px-6 py-2.5"
+                        >
+                            Clear Filters
+                        </button>
                     </div>
-
-                    <button
-                        onClick={() => setFilters({ page: 0, size: 20, city: '', state: '', zip: '', sort: '' })}
-                        className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded transition-colors"
-                    >
-                        Clear All Filters
-                    </button>
                 </div>
 
                 {/* Loading/Error States */}
@@ -818,7 +846,7 @@ function App() {
                         <strong style={{color: '#111827'}}>{pageInfo.totalElements.toLocaleString()}</strong> properties found
                         {import.meta.env.DEV && (
                             <span style={{marginLeft: '0.5rem', fontSize: '0.75rem', color: '#9ca3af'}}>
-                                (Loaded: {properties.length}, Loading: {loading ? 'Yes' : 'No'}, Error: {error ? 'Yes' : 'No'})
+                                (Loaded: {properties.length})
                             </span>
                         )}
                     </div>
@@ -837,21 +865,21 @@ function App() {
 
                         {/* Pagination */}
                         {pageInfo.totalPages > 1 && (
-                            <div className="flex justify-center items-center gap-2">
+                            <div className="flex justify-center items-center gap-6">
                                 <button
                                     onClick={() => handlePageChange(pageInfo.currentPage - 1)}
                                     disabled={pageInfo.currentPage === 0}
-                                    className="px-4 py-2 bg-blue-600 text-white rounded disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                    className="px-4 py-2 bg-blue-600 text-white rounded disabled:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
                                 >
                                     Previous
                                 </button>
-                                <span className="text-gray-600">
-                  Page {pageInfo.currentPage + 1} of {pageInfo.totalPages}
-                </span>
+                                <span className="text-white font-medium">
+                                    Page {pageInfo.currentPage + 1} of {pageInfo.totalPages}
+                                </span>
                                 <button
                                     onClick={() => handlePageChange(pageInfo.currentPage + 1)}
                                     disabled={pageInfo.currentPage >= pageInfo.totalPages - 1}
-                                    className="px-4 py-2 bg-blue-600 text-white rounded disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                    className="px-4 py-2 bg-blue-600 text-white rounded disabled:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
                                 >
                                     Next
                                 </button>
