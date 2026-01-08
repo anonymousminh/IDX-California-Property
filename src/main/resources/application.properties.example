@@ -23,5 +23,19 @@ spring.data.web.pageable.size-parameter=size
 spring.data.web.pageable.sort-parameter=sort
 
 # Server Configuration (optional)
-# server.port=8080
+# If your host provides a PORT env var (common on platforms), you can bind to it with:
+# server.port=${PORT:8080}
+
+# Spring Boot Actuator (health checks)
+# Expose the health endpoint (Actuator exposes /actuator/health by default).
+# To expose it over HTTP, set the following (only expose what you need in prod):
+management.endpoints.web.exposure.include=health,info
+management.endpoint.health.show-details=never
+
+# Hibernate Quoted Identifiers (for MySQL with mixed-case column names)
+# Set these as environment variables in production:
+# SPRING_JPA_PROPERTIES_HIBERNATE_GLOBALLY_QUOTED_IDENTIFIERS=true
+# SPRING_JPA_PROPERTIES_HIBERNATE_GLOBALLY_QUOTED_IDENTIFIERS_SKIP_COLUMN_DEFINITIONS=true
+spring.jpa.properties.hibernate.globally_quoted_identifiers=true
+spring.jpa.properties.hibernate.globally_quoted_identifiers_skip_column_definitions=true
 
