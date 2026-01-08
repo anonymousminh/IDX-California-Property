@@ -1,7 +1,6 @@
 # Ignore everything not needed for build
 .git
 .gitignore
-.mvn/wrapper/maven-wrapper.properties
 *.md
 *.env
 *.log
@@ -33,7 +32,4 @@ docker-compose.yml
 Dockerfile
 .dockerignore
 
-# Documentation
-README.md
-DEPLOYMENT.md
-ENVIRONMENT_SETUP.md
+# Documentation (already excluded by *.md above)
