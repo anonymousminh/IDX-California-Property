@@ -3,7 +3,6 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-.mvn/wrapper/maven-wrapper.properties
 
 # IDE
 .idea/
@@ -39,8 +38,8 @@ src/main/resources/application.properties
 
 # Node modules (if any in root)
 node_modules/
-package-lock.json
-package.json
+/package-lock.json
+/package.json
 
 # Frontend build artifacts
 idx-frontend/node_modules/

@@ -13,11 +13,21 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
+        // Read allowed origins from environment variable ALLOWED_ORIGINS (comma-separated).
+        // Fallback to common local dev origins.
+        String allowed = System.getenv("ALLOWED_ORIGINS");
+        String[] origins;
+        if (allowed != null && !allowed.isBlank()) {
+            origins = java.util.Arrays.stream(allowed.split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .toArray(String[]::new);
+        } else {
+            origins = new String[]{"http://localhost:5173", "http://localhost:3000"};
+        }
+
         registry.addMapping("/**")
-                .allowedOrigins(
-                        "http://localhost:5173",  // Vite default port
-                        "http://localhost:3000"   // Create React App default port
-                )
+                .allowedOrigins(origins)
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                 .allowedHeaders("*")
                 .allowCredentials(true)

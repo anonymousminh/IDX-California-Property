@@ -1,8 +1,8 @@
 import axios from 'axios';
 import type {Property, PropertyPage, PropertyFilters} from '../types/property';
 
-// Base URL for your Spring Boot API
-const API_BASE_URL = 'http://localhost:8080';
+// Base URL for your Spring Boot API — use Vite env var when available
+const API_BASE_URL = import.meta?.env?.VITE_API_BASE_URL || 'http://localhost:8080';
 
 // Create axios instance with default config
 const api = axios.create({

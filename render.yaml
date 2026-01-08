@@ -1,0 +1,37 @@
+# Render Blueprint for IDX Real Estate Backend
+# This file allows one-click deployment to Render
+# See: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: idx-real-estate-backend
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free  # Change to 'starter' for production (no sleep)
+    region: oregon  # Choose: oregon, frankfurt, ohio, singapore
+    
+    # Health check
+    healthCheckPath: /actuator/health
+    
+    # Environment variables (set actual values in Render dashboard)
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        sync: false  # Set manually in dashboard
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false  # Set manually in dashboard
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false  # Set manually in dashboard
+      - key: ALLOWED_ORIGINS
+        value: https://your-frontend.vercel.app  # Update this
+      - key: SPRING_JPA_SHOW_SQL
+        value: false
+      - key: JAVA_OPTS
+        value: -Xmx512m -Xms256m
+
+# To deploy:
+# 1. Push this file to your repo
+# 2. Go to https://dashboard.render.com/blueprints
+# 3. Connect your repo
+# 4. Set the secret environment variables
+# 5. Deploy!
+

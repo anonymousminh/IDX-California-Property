@@ -1,0 +1,39 @@
+# Ignore everything not needed for build
+.git
+.gitignore
+.mvn/wrapper/maven-wrapper.properties
+*.md
+*.env
+*.log
+
+# IDE
+.idea/
+.vscode/
+.settings/
+*.iml
+*.ipr
+*.iws
+
+# Build artifacts (except mvnw and .mvn for building)
+target/
+*.class
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node.js (if any)
+node_modules/
+idx-frontend/node_modules/
+idx-frontend/dist/
+idx-frontend/.vite/
+
+# Docker
+docker-compose.yml
+Dockerfile
+.dockerignore
+
+# Documentation
+README.md
+DEPLOYMENT.md
+ENVIRONMENT_SETUP.md
