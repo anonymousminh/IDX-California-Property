@@ -947,7 +947,7 @@ function App() {
                 {/* Results Summary */}
                 {!loading && !error && (
                     <div className="results-summary">
-                        <strong style={{color: '#111827'}}>{pageInfo.totalElements.toLocaleString()}</strong> properties found
+                        <strong style={{color: 'white'}}>{pageInfo.totalElements.toLocaleString()}</strong> properties found
                         {import.meta.env.DEV && (
                             <span style={{marginLeft: '0.5rem', fontSize: '0.75rem', color: '#9ca3af'}}>
                                 (Loaded: {properties.length})
