@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { propertyService } from './services/api';
 import type {Property, PropertyFilters} from './types/property';
+import PropertyMap from './components/PropertyMap';
 import './App.css';
 
 function App() {
@@ -19,6 +20,9 @@ function App() {
     const [useNLPSearch, setUseNLPSearch] = useState<boolean>(true);
     const [parsedQuery, setParsedQuery] = useState<any>(null);
     const [showParsedQuery, setShowParsedQuery] = useState<boolean>(false);
+    
+    // View mode state (grid or map)
+    const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
 
     // Filter state
     const [filters, setFilters] = useState<PropertyFilters>({
@@ -891,7 +895,7 @@ function App() {
                                 boxShadow: useNLPSearch ? '0 2px 8px rgba(102, 126, 234, 0.3)' : 'none'
                             }}
                         >
-                            🤖 Smart Search
+                            Smart Search
                         </button>
                         <button
                             onClick={() => setUseNLPSearch(false)}
@@ -908,7 +912,7 @@ function App() {
                                 boxShadow: !useNLPSearch ? '0 2px 8px rgba(102, 126, 234, 0.3)' : 'none'
                             }}
                         >
-                            ⚙️ Advanced Filters
+                            Advanced Filters
                         </button>
                     </div>
                 </div>
@@ -981,7 +985,7 @@ function App() {
                                         e.currentTarget.style.boxShadow = '0 2px 8px rgba(102, 126, 234, 0.3)';
                                     }}
                                 >
-                                    Search 🚀
+                                    Search
                                 </button>
                             </div>
                             
@@ -1341,28 +1345,121 @@ function App() {
                     </div>
                 )}
 
-                {/* Results Summary */}
+                {/* Results Summary and View Toggle */}
                 {!loading && !error && (
-                    <div className="results-summary">
-                        <strong style={{color: 'white'}}>{pageInfo.totalElements.toLocaleString()}</strong> properties found
-                        {import.meta.env.DEV && (
-                            <span style={{marginLeft: '0.5rem', fontSize: '0.75rem', color: '#9ca3af'}}>
-                                (Loaded: {properties.length})
-                            </span>
-                        )}
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: '1.5rem',
+                        flexWrap: 'wrap',
+                        gap: '1rem'
+                    }}>
+                        <div className="results-summary">
+                            <strong style={{color: 'white'}}>{pageInfo.totalElements.toLocaleString()}</strong> properties found
+                            {import.meta.env.DEV && (
+                                <span style={{marginLeft: '0.5rem', fontSize: '0.75rem', color: '#9ca3af'}}>
+                                    (Loaded: {properties.length})
+                                </span>
+                            )}
+                        </div>
+
+                        {/* View Mode Toggle */}
+                        <div style={{
+                            background: 'white',
+                            borderRadius: '10px',
+                            padding: '0.375rem',
+                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                            display: 'inline-flex',
+                            gap: '0.25rem'
+                        }}>
+                            <button
+                                onClick={() => setViewMode('grid')}
+                                style={{
+                                    padding: '0.5rem 1.25rem',
+                                    borderRadius: '7px',
+                                    border: 'none',
+                                    background: viewMode === 'grid' ? 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)' : 'transparent',
+                                    color: viewMode === 'grid' ? 'white' : '#6b7280',
+                                    fontWeight: 600,
+                                    fontSize: '0.875rem',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s ease',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem',
+                                    boxShadow: viewMode === 'grid' ? '0 2px 6px rgba(59, 130, 246, 0.3)' : 'none'
+                                }}
+                                onMouseEnter={(e) => {
+                                    if (viewMode !== 'grid') {
+                                        e.currentTarget.style.background = '#f3f4f6';
+                                    }
+                                }}
+                                onMouseLeave={(e) => {
+                                    if (viewMode !== 'grid') {
+                                        e.currentTarget.style.background = 'transparent';
+                                    }
+                                }}
+                            >
+                                <span style={{fontSize: '1rem'}}>⊞</span>
+                                Grid View
+                            </button>
+                            <button
+                                onClick={() => setViewMode('map')}
+                                style={{
+                                    padding: '0.5rem 1.25rem',
+                                    borderRadius: '7px',
+                                    border: 'none',
+                                    background: viewMode === 'map' ? 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)' : 'transparent',
+                                    color: viewMode === 'map' ? 'white' : '#6b7280',
+                                    fontWeight: 600,
+                                    fontSize: '0.875rem',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s ease',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem',
+                                    boxShadow: viewMode === 'map' ? '0 2px 6px rgba(59, 130, 246, 0.3)' : 'none'
+                                }}
+                                onMouseEnter={(e) => {
+                                    if (viewMode !== 'map') {
+                                        e.currentTarget.style.background = '#f3f4f6';
+                                    }
+                                }}
+                                onMouseLeave={(e) => {
+                                    if (viewMode !== 'map') {
+                                        e.currentTarget.style.background = 'transparent';
+                                    }
+                                }}
+                            >
+                                <span style={{fontSize: '1rem'}}>🗺️</span>
+                                Map View
+                            </button>
+                        </div>
                     </div>
                 )}
 
-                {/* Property Grid */}
+                {/* Property Grid or Map */}
                 {!loading && !error && properties.length > 0 && (
                     <>
-                        <div className="property-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-8">
-                            {properties.map((property, index) => {
-                                return (
-                                    <PropertyCard key={property.id || `property-${index}`} property={property} />
-                                );
-                            })}
-                        </div>
+                        {viewMode === 'grid' ? (
+                            <div className="property-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-8">
+                                {properties.map((property, index) => {
+                                    return (
+                                        <PropertyCard key={property.id || `property-${index}`} property={property} />
+                                    );
+                                })}
+                            </div>
+                        ) : (
+                            <div className="mb-8">
+                                <PropertyMap 
+                                    properties={properties}
+                                    onPropertyClick={setSelectedProperty}
+                                    selectedProperty={selectedProperty}
+                                    height="700px"
+                                />
+                            </div>
+                        )}
 
                         {/* Pagination */}
                         {pageInfo.totalPages > 1 && (
