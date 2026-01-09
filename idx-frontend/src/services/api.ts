@@ -38,6 +38,42 @@ export const propertyService = {
         const response = await api.get<Property>(`/properties/${id}`);
         return response.data;
     },
+
+    /**
+     * Search properties using natural language query
+     * @param naturalLanguageQuery - e.g., "3 bedroom house with pool in Los Angeles under 500k"
+     * @param page - page number (default 0)
+     * @param size - page size (default 20)
+     */
+    searchWithNLP: async (naturalLanguageQuery: string, page: number = 0, size: number = 20): Promise<PropertyPage> => {
+        const response = await api.post<PropertyPage>(
+            `/properties/nlp-search?page=${page}&size=${size}`,
+            naturalLanguageQuery,
+            {
+                headers: {
+                    'Content-Type': 'text/plain',
+                },
+            }
+        );
+        return response.data;
+    },
+
+    /**
+     * Parse natural language query without executing search
+     * Useful for debugging and showing what the system understood
+     */
+    parseNLPQuery: async (naturalLanguageQuery: string): Promise<any> => {
+        const response = await api.post(
+            '/properties/nlp-parse',
+            naturalLanguageQuery,
+            {
+                headers: {
+                    'Content-Type': 'text/plain',
+                },
+            }
+        );
+        return response.data;
+    },
 };
 
 export default api;

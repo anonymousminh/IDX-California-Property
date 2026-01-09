@@ -14,6 +14,12 @@ function App() {
         totalElements: 0,
     });
 
+    // NLP Search state
+    const [nlpQuery, setNlpQuery] = useState<string>('');
+    const [useNLPSearch, setUseNLPSearch] = useState<boolean>(true);
+    const [parsedQuery, setParsedQuery] = useState<any>(null);
+    const [showParsedQuery, setShowParsedQuery] = useState<boolean>(false);
+
     // Filter state
     const [filters, setFilters] = useState<PropertyFilters>({
         city: '',
@@ -30,7 +36,28 @@ function App() {
         sort: '',
     });
 
-    // Fetch properties
+    // Fetch properties using NLP search
+    const fetchPropertiesNLP = async (query: string, page: number = 0) => {
+        try {
+            setLoading(true);
+            setError(null);
+            const data = await propertyService.searchWithNLP(query, page, 20);
+            setProperties(data.content);
+            setPageInfo({
+                currentPage: data.number,
+                totalPages: data.totalPages,
+                totalElements: data.totalElements,
+            });
+            console.log('Properties fetched via NLP:', data.content.length);
+        } catch (err) {
+            setError('Failed to search properties. Make sure your Spring Boot API is running on http://localhost:8080');
+            console.error('Error fetching properties with NLP:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Fetch properties using traditional filters
     const fetchProperties = async () => {
         try {
             setLoading(true);
@@ -61,9 +88,11 @@ function App() {
 
     // Fetch on mount and when filters change
     useEffect(() => {
-        fetchProperties();
+        if (!useNLPSearch) {
+            fetchProperties();
+        }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [JSON.stringify(filters)]);
+    }, [JSON.stringify(filters), useNLPSearch]);
 
     // Handle filter changes
     const handleFilterChange = (key: keyof PropertyFilters, value: any) => {
@@ -74,9 +103,40 @@ function App() {
         }));
     };
 
+    // Handle NLP search
+    const handleNLPSearch = async () => {
+        if (!nlpQuery.trim()) {
+            setError('Please enter a search query');
+            return;
+        }
+        
+        // Parse query to show what was understood
+        try {
+            const parsed = await propertyService.parseNLPQuery(nlpQuery);
+            setParsedQuery(parsed);
+            setShowParsedQuery(true);
+            console.log('Parsed query:', parsed);
+        } catch (err) {
+            console.warn('Failed to parse query:', err);
+        }
+        
+        await fetchPropertiesNLP(nlpQuery, 0);
+    };
+
+    // Handle NLP search on Enter key
+    const handleNLPKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            handleNLPSearch();
+        }
+    };
+
     // Handle pagination
     const handlePageChange = (newPage: number) => {
-        setFilters(prev => ({ ...prev, page: newPage }));
+        if (useNLPSearch && nlpQuery.trim()) {
+            fetchPropertiesNLP(nlpQuery, newPage);
+        } else {
+            setFilters(prev => ({ ...prev, page: newPage }));
+        }
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -806,47 +866,381 @@ function App() {
 
             {/* Main Content */}
             <main style={{maxWidth: '1600px', margin: '0 auto', padding: '0 1rem 2rem'}}>
+                {/* Search Mode Toggle */}
+                <div className="mb-6 flex justify-center">
+                    <div style={{
+                        background: 'white',
+                        borderRadius: '12px',
+                        padding: '0.5rem',
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                        display: 'inline-flex',
+                        gap: '0.5rem'
+                    }}>
+                        <button
+                            onClick={() => setUseNLPSearch(true)}
+                            style={{
+                                padding: '0.625rem 1.5rem',
+                                borderRadius: '8px',
+                                border: 'none',
+                                background: useNLPSearch ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent',
+                                color: useNLPSearch ? 'white' : '#6b7280',
+                                fontWeight: 600,
+                                fontSize: '0.9375rem',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                boxShadow: useNLPSearch ? '0 2px 8px rgba(102, 126, 234, 0.3)' : 'none'
+                            }}
+                        >
+                            🤖 Smart Search
+                        </button>
+                        <button
+                            onClick={() => setUseNLPSearch(false)}
+                            style={{
+                                padding: '0.625rem 1.5rem',
+                                borderRadius: '8px',
+                                border: 'none',
+                                background: !useNLPSearch ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'transparent',
+                                color: !useNLPSearch ? 'white' : '#6b7280',
+                                fontWeight: 600,
+                                fontSize: '0.9375rem',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                boxShadow: !useNLPSearch ? '0 2px 8px rgba(102, 126, 234, 0.3)' : 'none'
+                            }}
+                        >
+                            ⚙️ Advanced Filters
+                        </button>
+                    </div>
+                </div>
+
                 {/* Filters Container */}
                 <div className="filter-container mb-8">
-                    {/* Main Search Input */}
-                    <div className="mb-5" style={{position: 'relative'}}>
-                        <div style={{
-                            position: 'absolute',
-                            left: '1.25rem',
-                            top: '50%',
-                            transform: 'translateY(-50%)',
-                            fontSize: '1.25rem',
-                            zIndex: 1
-                        }}>🔍</div>
-                        <input
-                            type="text"
-                            placeholder="Search by city or any property detail (address, zip, price, beds, etc.)"
-                            className="search-input-main"
-                            style={{
-                                width: '100%',
-                                padding: '1.125rem 1.25rem 1.125rem 3.5rem',
-                                fontSize: '1.05rem',
-                                borderRadius: '14px',
-                                border: '2px solid #e5e7eb',
-                                outline: 'none',
-                                transition: 'all 0.3s ease',
-                                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
-                                background: 'linear-gradient(to bottom, #ffffff 0%, #fafbfc 100%)'
-                            }}
-                            onFocus={(e) => {
-                                e.target.style.borderColor = '#3b82f6';
-                                e.target.style.boxShadow = '0 4px 16px rgba(59, 130, 246, 0.15), 0 0 0 4px rgba(59, 130, 246, 0.1)';
-                                e.target.style.background = '#ffffff';
-                            }}
-                            onBlur={(e) => {
-                                e.target.style.borderColor = '#e5e7eb';
-                                e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.06)';
-                                e.target.style.background = 'linear-gradient(to bottom, #ffffff 0%, #fafbfc 100%)';
-                            }}
-                        />
-                    </div>
+                    {/* NLP Search Input */}
+                    {useNLPSearch ? (
+                        <div className="mb-5">
+                            <div style={{position: 'relative'}}>
+                                <div style={{
+                                    position: 'absolute',
+                                    left: '1.25rem',
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
+                                    fontSize: '1.5rem',
+                                    zIndex: 1
+                                }}>💬</div>
+                                <input
+                                    type="text"
+                                    placeholder='Try: "3 bedroom house with pool in Los Angeles under 500k"'
+                                    className="search-input-main"
+                                    value={nlpQuery}
+                                    onChange={(e) => setNlpQuery(e.target.value)}
+                                    onKeyPress={handleNLPKeyPress}
+                                    style={{
+                                        width: '100%',
+                                        padding: '1.25rem 8rem 1.25rem 3.75rem',
+                                        fontSize: '1.075rem',
+                                        borderRadius: '16px',
+                                        border: '3px solid #667eea',
+                                        outline: 'none',
+                                        transition: 'all 0.3s ease',
+                                        boxShadow: '0 4px 20px rgba(102, 126, 234, 0.2)',
+                                        background: 'white'
+                                    }}
+                                    onFocus={(e) => {
+                                        e.target.style.borderColor = '#764ba2';
+                                        e.target.style.boxShadow = '0 6px 24px rgba(118, 75, 162, 0.25), 0 0 0 4px rgba(102, 126, 234, 0.1)';
+                                    }}
+                                    onBlur={(e) => {
+                                        e.target.style.borderColor = '#667eea';
+                                        e.target.style.boxShadow = '0 4px 20px rgba(102, 126, 234, 0.2)';
+                                    }}
+                                />
+                                <button
+                                    onClick={handleNLPSearch}
+                                    style={{
+                                        position: 'absolute',
+                                        right: '0.5rem',
+                                        top: '50%',
+                                        transform: 'translateY(-50%)',
+                                        padding: '0.75rem 1.75rem',
+                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '12px',
+                                        fontWeight: 700,
+                                        fontSize: '1rem',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.2s ease',
+                                        boxShadow: '0 2px 8px rgba(102, 126, 234, 0.3)'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.transform = 'translateY(-50%) scale(1.05)';
+                                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.4)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.transform = 'translateY(-50%) scale(1)';
+                                        e.currentTarget.style.boxShadow = '0 2px 8px rgba(102, 126, 234, 0.3)';
+                                    }}
+                                >
+                                    Search 🚀
+                                </button>
+                            </div>
+                            
+                            {/* Example queries */}
+                            <div className="mt-4" style={{
+                                display: 'flex',
+                                gap: '0.625rem',
+                                flexWrap: 'wrap',
+                                justifyContent: 'center'
+                            }}>
+                                <div style={{fontSize: '0.875rem', color: '#6b7280', marginRight: '0.5rem'}}>
+                                    Try these:
+                                </div>
+                                {[
+                                    "3 bed house in San Francisco",
+                                    "Condo with pool under 400k",
+                                    "2+ bath in Los Angeles with view",
+                                    "Houses in San Diego 500-700k"
+                                ].map((example) => (
+                                    <button
+                                        key={example}
+                                        onClick={() => {
+                                            setNlpQuery(example);
+                                            setTimeout(() => handleNLPSearch(), 100);
+                                        }}
+                                        style={{
+                                            padding: '0.375rem 0.875rem',
+                                            background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1))',
+                                            border: '1px solid rgba(102, 126, 234, 0.3)',
+                                            borderRadius: '20px',
+                                            fontSize: '0.8125rem',
+                                            color: '#667eea',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s ease',
+                                            fontWeight: 500
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2))';
+                                            e.currentTarget.style.borderColor = '#667eea';
+                                            e.currentTarget.style.transform = 'translateY(-1px)';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1))';
+                                            e.currentTarget.style.borderColor = 'rgba(102, 126, 234, 0.3)';
+                                            e.currentTarget.style.transform = 'translateY(0)';
+                                        }}
+                                    >
+                                        {example}
+                                    </button>
+                                ))}
+                            </div>
 
-                    {/* Filter Cards Grid */}
+                            {/* Parsed Query Display */}
+                            {showParsedQuery && parsedQuery && (
+                                <div className="mt-4 p-4" style={{
+                                    background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05))',
+                                    borderRadius: '12px',
+                                    border: '1px solid rgba(102, 126, 234, 0.2)'
+                                }}>
+                                    <div style={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        marginBottom: '0.75rem'
+                                    }}>
+                                        <div style={{
+                                            fontSize: '0.9375rem',
+                                            fontWeight: 600,
+                                            color: '#667eea'
+                                        }}>
+                                            🎯 What I understood:
+                                        </div>
+                                        <button
+                                            onClick={() => setShowParsedQuery(false)}
+                                            style={{
+                                                background: 'none',
+                                                border: 'none',
+                                                color: '#9ca3af',
+                                                cursor: 'pointer',
+                                                fontSize: '1.25rem',
+                                                padding: '0'
+                                            }}
+                                        >
+                                            ×
+                                        </button>
+                                    </div>
+                                    <div style={{
+                                        display: 'flex',
+                                        gap: '0.5rem',
+                                        flexWrap: 'wrap',
+                                        fontSize: '0.875rem'
+                                    }}>
+                                        {parsedQuery.city && (
+                                            <span style={{
+                                                padding: '0.375rem 0.75rem',
+                                                background: 'white',
+                                                borderRadius: '8px',
+                                                color: '#374151'
+                                            }}>
+                                                📍 {parsedQuery.city}
+                                            </span>
+                                        )}
+                                        {parsedQuery.beds && (
+                                            <span style={{
+                                                padding: '0.375rem 0.75rem',
+                                                background: 'white',
+                                                borderRadius: '8px',
+                                                color: '#374151'
+                                            }}>
+                                                🛏️ {parsedQuery.beds} beds
+                                            </span>
+                                        )}
+                                        {parsedQuery.minBeds && (
+                                            <span style={{
+                                                padding: '0.375rem 0.75rem',
+                                                background: 'white',
+                                                borderRadius: '8px',
+                                                color: '#374151'
+                                            }}>
+                                                🛏️ {parsedQuery.minBeds}+ beds
+                                            </span>
+                                        )}
+                                        {parsedQuery.baths && (
+                                            <span style={{
+                                                padding: '0.375rem 0.75rem',
+                                                background: 'white',
+                                                borderRadius: '8px',
+                                                color: '#374151'
+                                            }}>
+                                                🛁 {parsedQuery.baths} baths
+                                            </span>
+                                        )}
+                                        {parsedQuery.minBaths && (
+                                            <span style={{
+                                                padding: '0.375rem 0.75rem',
+                                                background: 'white',
+                                                borderRadius: '8px',
+                                                color: '#374151'
+                                            }}>
+                                                🛁 {parsedQuery.minBaths}+ baths
+                                            </span>
+                                        )}
+                                        {parsedQuery.maxPrice && (
+                                            <span style={{
+                                                padding: '0.375rem 0.75rem',
+                                                background: 'white',
+                                                borderRadius: '8px',
+                                                color: '#374151'
+                                            }}>
+                                                💰 Under ${(parsedQuery.maxPrice / 1000).toFixed(0)}k
+                                            </span>
+                                        )}
+                                        {parsedQuery.minPrice && (
+                                            <span style={{
+                                                padding: '0.375rem 0.75rem',
+                                                background: 'white',
+                                                borderRadius: '8px',
+                                                color: '#374151'
+                                            }}>
+                                                💰 Over ${(parsedQuery.minPrice / 1000).toFixed(0)}k
+                                            </span>
+                                        )}
+                                        {parsedQuery.poolPrivate && (
+                                            <span style={{
+                                                padding: '0.375rem 0.75rem',
+                                                background: 'white',
+                                                borderRadius: '8px',
+                                                color: '#374151'
+                                            }}>
+                                                🏊 Pool
+                                            </span>
+                                        )}
+                                        {parsedQuery.fireplace && (
+                                            <span style={{
+                                                padding: '0.375rem 0.75rem',
+                                                background: 'white',
+                                                borderRadius: '8px',
+                                                color: '#374151'
+                                            }}>
+                                                🔥 Fireplace
+                                            </span>
+                                        )}
+                                        {parsedQuery.view && (
+                                            <span style={{
+                                                padding: '0.375rem 0.75rem',
+                                                background: 'white',
+                                                borderRadius: '8px',
+                                                color: '#374151'
+                                            }}>
+                                                🏔️ View
+                                            </span>
+                                        )}
+                                        {parsedQuery.garage && (
+                                            <span style={{
+                                                padding: '0.375rem 0.75rem',
+                                                background: 'white',
+                                                borderRadius: '8px',
+                                                color: '#374151'
+                                            }}>
+                                                🚗 Garage
+                                            </span>
+                                        )}
+                                        {parsedQuery.confidenceScore !== undefined && (
+                                            <span style={{
+                                                padding: '0.375rem 0.75rem',
+                                                background: parsedQuery.confidenceScore > 50 ? 'rgba(34, 197, 94, 0.1)' : 'rgba(251, 191, 36, 0.1)',
+                                                borderRadius: '8px',
+                                                color: parsedQuery.confidenceScore > 50 ? '#16a34a' : '#f59e0b',
+                                                fontWeight: 600
+                                            }}>
+                                                {parsedQuery.confidenceScore}% confident
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        /* Traditional Filter Input */
+                        <div className="mb-5" style={{position: 'relative'}}>
+                            <div style={{
+                                position: 'absolute',
+                                left: '1.25rem',
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                fontSize: '1.25rem',
+                                zIndex: 1
+                            }}>🔍</div>
+                            <input
+                                type="text"
+                                placeholder="Search by city or any property detail (address, zip, price, beds, etc.)"
+                                className="search-input-main"
+                                style={{
+                                    width: '100%',
+                                    padding: '1.125rem 1.25rem 1.125rem 3.5rem',
+                                    fontSize: '1.05rem',
+                                    borderRadius: '14px',
+                                    border: '2px solid #e5e7eb',
+                                    outline: 'none',
+                                    transition: 'all 0.3s ease',
+                                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
+                                    background: 'linear-gradient(to bottom, #ffffff 0%, #fafbfc 100%)'
+                                }}
+                                onFocus={(e) => {
+                                    e.target.style.borderColor = '#3b82f6';
+                                    e.target.style.boxShadow = '0 4px 16px rgba(59, 130, 246, 0.15), 0 0 0 4px rgba(59, 130, 246, 0.1)';
+                                    e.target.style.background = '#ffffff';
+                                }}
+                                onBlur={(e) => {
+                                    e.target.style.borderColor = '#e5e7eb';
+                                    e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.06)';
+                                    e.target.style.background = 'linear-gradient(to bottom, #ffffff 0%, #fafbfc 100%)';
+                                }}
+                            />
+                        </div>
+                    )}
+
+                    {/* Filter Cards Grid - only show when not using NLP search */}
+                    {!useNLPSearch && (
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-4">
                         <div className="filter-card">
                             <input
@@ -911,8 +1305,10 @@ function App() {
                             />
                         </div>
                     </div>
+                    )}
 
-                    {/* Action Buttons Row */}
+                    {/* Action Buttons Row - only show when not using NLP search */}
+                    {!useNLPSearch && (
                     <div className="flex gap-3 flex-wrap">
                         <button
                             onClick={() => fetchProperties()}
@@ -927,6 +1323,7 @@ function App() {
                             Clear Filters
                         </button>
                     </div>
+                    )}
                 </div>
 
                 {/* Loading/Error States */}
