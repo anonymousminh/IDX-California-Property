@@ -91,5 +91,100 @@ public class PropertySpecification {
             return criteriaBuilder.greaterThanOrEqualTo(root.get("baths"), minBaths);
         };
     }
+
+    // Square footage specifications
+    public static Specification<Property> squareFeetGreaterThanOrEqual(Integer minSquareFeet) {
+        return (root, query, criteriaBuilder) -> {
+            if (minSquareFeet == null) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.greaterThanOrEqualTo(root.get("squareFeet"), minSquareFeet);
+        };
+    }
+
+    public static Specification<Property> squareFeetLessThanOrEqual(Integer maxSquareFeet) {
+        return (root, query, criteriaBuilder) -> {
+            if (maxSquareFeet == null) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.lessThanOrEqualTo(root.get("squareFeet"), maxSquareFeet);
+        };
+    }
+
+    // Feature specifications
+    public static Specification<Property> hasPool(Boolean hasPool) {
+        return (root, query, criteriaBuilder) -> {
+            if (hasPool == null || !hasPool) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.equal(root.get("poolPrivate"), true);
+        };
+    }
+
+    public static Specification<Property> hasFireplace(Boolean hasFireplace) {
+        return (root, query, criteriaBuilder) -> {
+            if (hasFireplace == null || !hasFireplace) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.equal(root.get("fireplace"), true);
+        };
+    }
+
+    public static Specification<Property> hasView(Boolean hasView) {
+        return (root, query, criteriaBuilder) -> {
+            if (hasView == null || !hasView) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.equal(root.get("view"), true);
+        };
+    }
+
+    public static Specification<Property> hasGarage(Boolean hasGarage) {
+        return (root, query, criteriaBuilder) -> {
+            if (hasGarage == null || !hasGarage) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.equal(root.get("garage"), true);
+        };
+    }
+
+    // Year built specifications
+    public static Specification<Property> yearBuiltGreaterThanOrEqual(Integer minYear) {
+        return (root, query, criteriaBuilder) -> {
+            if (minYear == null) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.greaterThanOrEqualTo(root.get("year_built"), minYear);
+        };
+    }
+
+    public static Specification<Property> yearBuiltLessThanOrEqual(Integer maxYear) {
+        return (root, query, criteriaBuilder) -> {
+            if (maxYear == null) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.lessThanOrEqualTo(root.get("year_built"), maxYear);
+        };
+    }
+
+    // Property type specification
+    public static Specification<Property> hasPropertyType(String propertyType) {
+        return (root, query, criteriaBuilder) -> {
+            if (propertyType == null || propertyType.trim().isEmpty()) {
+                return criteriaBuilder.conjunction();
+            }
+            // Search in both household_type and property_class fields
+            return criteriaBuilder.or(
+                criteriaBuilder.like(
+                    criteriaBuilder.lower(root.get("household_type")),
+                    "%" + propertyType.toLowerCase() + "%"
+                ),
+                criteriaBuilder.like(
+                    criteriaBuilder.lower(root.get("property_class")),
+                    "%" + propertyType.toLowerCase() + "%"
+                )
+            );
+        };
+    }
 }
 
