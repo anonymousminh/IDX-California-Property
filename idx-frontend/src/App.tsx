@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { propertyService } from './services/api';
 import type {Property, PropertyFilters} from './types/property';
 import PropertyMap from './components/PropertyMap';
+import Chatbot from './components/Chatbot';
 import './App.css';
 
 function App() {
@@ -1599,6 +1600,9 @@ function App() {
                     onClose={() => setSelectedProperty(null)}
                 />
             )}
+
+            {/* AI Chatbot */}
+            <Chatbot />
 
             {/* Footer */}
             <footer style={{

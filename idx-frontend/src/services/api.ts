@@ -76,4 +76,38 @@ export const propertyService = {
     },
 };
 
+// Chatbot API service
+export interface ChatMessage {
+    role: 'user' | 'assistant' | 'system';
+    content: string;
+    timestamp?: number;
+}
+
+export interface ChatRequest {
+    role: string;
+    content: string;
+    timestamp?: number;
+    conversationHistory?: ChatMessage[];
+    includePropertyContext?: boolean;
+    propertyIds?: number[];
+}
+
+export interface ChatResponse {
+    message: string;
+    timestamp: number;
+    suggestedQuestions?: string[];
+    relatedPropertyIds?: number[];
+    contextUsed?: string;
+}
+
+export const chatbotService = {
+    /**
+     * Send a message to the AI chatbot
+     */
+    sendMessage: async (request: ChatRequest): Promise<ChatResponse> => {
+        const response = await api.post<ChatResponse>('/api/chatbot/chat', request);
+        return response.data;
+    },
+};
+
 export default api;
