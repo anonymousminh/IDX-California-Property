@@ -11,7 +11,7 @@ export default function Chatbot({ propertyContext }: ChatbotProps) {
     const [messages, setMessages] = useState<ChatMessage[]>([
         {
             role: 'assistant',
-            content: "Hi! I'm your real estate assistant. Ask me anything about properties, neighborhoods, pricing, or the home buying process!",
+            content: "Hi! I'm here to help you find your perfect California home! 🏡\n\nTo get started, what's most important to you in your home search? For example:\n• Your budget range\n• Preferred location\n• Number of bedrooms\n• Special features you need",
             timestamp: Date.now()
         }
     ]);
