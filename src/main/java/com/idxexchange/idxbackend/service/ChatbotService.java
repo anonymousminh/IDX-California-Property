@@ -15,8 +15,9 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 /**
  * Service for handling AI chatbot functionality
@@ -87,6 +88,11 @@ public class ChatbotService {
             
             String responseText = choices.get(0).getMessage().getContent();
             
+            // Extract lead qualification data if enough conversation history
+            if (message.getConversationHistory() != null && message.getConversationHistory().size() >= 2) {
+                extractLeadData(message.getConversationHistory(), message.getContent());
+            }
+            
             // Build response
             return ChatResponse.builder()
                 .message(responseText)
@@ -103,22 +109,40 @@ public class ChatbotService {
     }
     
     /**
-     * Build system prompt with property context
+     * Build system prompt with property context - Lead Qualification Focus
      */
     private String buildSystemPrompt(String propertyContext) {
         StringBuilder prompt = new StringBuilder();
-        prompt.append("You are a helpful real estate assistant for a California property listing website. ");
-        prompt.append("You help users find properties, answer questions about real estate, and provide guidance on the home buying process. ");
-        prompt.append("Be friendly, professional, and concise. ");
+        
+        prompt.append("You are a friendly and helpful real estate lead qualification assistant for a California property listing website. ");
+        prompt.append("Your primary goal is to understand the buyer's needs through natural conversation and qualify them as leads. ");
+        prompt.append("\n\nYour responsibilities:\n");
+        prompt.append("1. Ask thoughtful questions to understand their needs (budget, location, home features, timeline)\n");
+        prompt.append("2. Gather key qualification information naturally through conversation\n");
+        prompt.append("3. Make personalized property recommendations based on their answers\n");
+        prompt.append("4. Be conversational - don't interrogate, have a friendly dialogue\n");
+        prompt.append("5. After understanding their needs, guide them to search for properties or contact an agent\n");
+        
+        prompt.append("\n\nKey qualification questions to explore (ask naturally, not all at once):\n");
+        prompt.append("- Price range/budget (most important)\n");
+        prompt.append("- Preferred cities or neighborhoods in California\n");
+        prompt.append("- Number of bedrooms and bathrooms needed\n");
+        prompt.append("- Must-have features (pool, garage, view, etc.)\n");
+        prompt.append("- Timeline for purchase (urgent, 3-6 months, just looking, etc.)\n");
+        prompt.append("- Current situation (first-time buyer, upgrading, relocating, etc.)\n");
         
         if (!propertyContext.isEmpty()) {
-            prompt.append("\n\nHere is the current property database context:\n");
+            prompt.append("\n\nCurrent property database context:\n");
             prompt.append(propertyContext);
-            prompt.append("\n\nUse this information to provide accurate, data-driven responses.");
+            prompt.append("\n\nUse this data to provide accurate recommendations and insights.");
         }
         
-        prompt.append("\n\nIf asked about specific properties, features, or locations, reference the data available. ");
-        prompt.append("If you don't have specific information, be honest and suggest using the search functionality.");
+        prompt.append("\n\nConversation style:\n");
+        prompt.append("- Start with a warm greeting and ONE key question (usually about what they're looking for)\n");
+        prompt.append("- Ask follow-up questions based on their responses\n");
+        prompt.append("- Show enthusiasm when they share information\n");
+        prompt.append("- If they've shared enough info, suggest using the search feature or connecting with an agent\n");
+        prompt.append("- Always be helpful, never pushy\n");
         
         return prompt.toString();
     }
@@ -207,41 +231,171 @@ public class ChatbotService {
     }
     
     /**
-     * Generate suggested follow-up questions
+     * Generate suggested follow-up questions - Lead Qualification Focus
      */
     private List<String> generateSuggestedQuestions(String userMessage) {
         String lowerMessage = userMessage.toLowerCase();
         
-        if (lowerMessage.contains("price") || lowerMessage.contains("cost") || lowerMessage.contains("afford")) {
+        // If discussing budget/price
+        if (lowerMessage.contains("budget") || lowerMessage.contains("price") || 
+            lowerMessage.contains("afford") || lowerMessage.contains("$") || 
+            lowerMessage.contains("k") || lowerMessage.contains("cost")) {
             return Arrays.asList(
-                "What's the average price in different cities?",
-                "Show me properties under $500k",
-                "What factors affect property prices?"
+                "What cities or neighborhoods interest you?",
+                "How many bedrooms do you need?",
+                "When are you planning to buy?"
             );
-        } else if (lowerMessage.contains("bedroom") || lowerMessage.contains("bed")) {
+        } 
+        // If discussing location
+        else if (lowerMessage.contains("location") || lowerMessage.contains("city") || 
+                 lowerMessage.contains("neighborhood") || lowerMessage.contains("area") ||
+                 lowerMessage.contains("los angeles") || lowerMessage.contains("san francisco") ||
+                 lowerMessage.contains("san diego") || lowerMessage.contains("sacramento")) {
             return Arrays.asList(
-                "What's the difference between 2 and 3 bedroom homes?",
-                "Show me homes with 4+ bedrooms",
-                "Are larger homes more expensive?"
+                "What's your budget range?",
+                "How many bedrooms and bathrooms do you need?",
+                "Any must-have features?"
             );
-        } else if (lowerMessage.contains("location") || lowerMessage.contains("city") || lowerMessage.contains("neighborhood")) {
+        }
+        // If discussing bedrooms/bathrooms
+        else if (lowerMessage.contains("bedroom") || lowerMessage.contains("bed") || 
+                 lowerMessage.contains("bath")) {
             return Arrays.asList(
-                "Which cities have the most properties?",
-                "What are the best neighborhoods for families?",
-                "Compare Los Angeles vs San Francisco properties"
+                "What's your price range?",
+                "Which areas are you considering?",
+                "What features are important to you?"
             );
-        } else if (lowerMessage.contains("feature") || lowerMessage.contains("pool") || lowerMessage.contains("garage")) {
+        }
+        // If discussing features
+        else if (lowerMessage.contains("pool") || lowerMessage.contains("garage") || 
+                 lowerMessage.contains("view") || lowerMessage.contains("yard") ||
+                 lowerMessage.contains("feature") || lowerMessage.contains("fireplace")) {
             return Arrays.asList(
-                "Show me homes with pools",
-                "What features are most common?",
-                "Do certain features increase property value?"
+                "What's your budget for a home with these features?",
+                "Which neighborhoods are you interested in?",
+                "When are you looking to move?"
             );
-        } else {
+        }
+        // If discussing timeline
+        else if (lowerMessage.contains("timeline") || lowerMessage.contains("when") || 
+                 lowerMessage.contains("soon") || lowerMessage.contains("month") ||
+                 lowerMessage.contains("year")) {
             return Arrays.asList(
-                "What types of properties are available?",
-                "How do I search for specific features?",
-                "Tell me about the California real estate market"
+                "Are you pre-approved for a mortgage?",
+                "Have you been actively looking at properties?",
+                "Would you like to see properties in your price range?"
             );
+        }
+        // First interaction or general inquiry
+        else {
+            return Arrays.asList(
+                "What's your budget range?",
+                "Which California cities interest you most?",
+                "How many bedrooms do you need?",
+                "When are you planning to buy?"
+            );
+        }
+    }
+    
+    /**
+     * Extract lead qualification data from conversation
+     * This logs lead information for follow-up (can be saved to database in production)
+     */
+    private void extractLeadData(List<ChatMessage> conversationHistory, String currentMessage) {
+        Map<String, String> leadData = new HashMap<>();
+        
+        // Combine all user messages
+        StringBuilder userMessages = new StringBuilder();
+        for (ChatMessage msg : conversationHistory) {
+            if ("user".equals(msg.getRole())) {
+                userMessages.append(msg.getContent()).append(" ");
+            }
+        }
+        userMessages.append(currentMessage).append(" ");
+        String conversation = userMessages.toString().toLowerCase();
+        
+        // Extract budget mentions
+        if (conversation.matches(".*\\$?\\d{3,}k.*") || conversation.matches(".*\\$\\d{6,}.*")) {
+            leadData.put("budget_mentioned", "yes");
+            // Try to extract specific numbers
+            if (conversation.contains("500k") || conversation.contains("$500")) {
+                leadData.put("budget_range", "~500k");
+            } else if (conversation.contains("1m") || conversation.contains("million")) {
+                leadData.put("budget_range", "1M+");
+            } else if (conversation.contains("300k") || conversation.contains("$300")) {
+                leadData.put("budget_range", "~300k");
+            }
+        }
+        
+        // Extract location mentions
+        List<String> cities = Arrays.asList("los angeles", "san francisco", "san diego", 
+                                            "sacramento", "san jose", "oakland", "fresno", 
+                                            "long beach", "bakersfield", "anaheim");
+        for (String city : cities) {
+            if (conversation.contains(city)) {
+                leadData.put("preferred_city", city);
+                break;
+            }
+        }
+        
+        // Extract bedroom count
+        if (conversation.matches(".*(\\d+)\\s*(bed|bedroom).*")) {
+            leadData.put("bedrooms_mentioned", "yes");
+            if (conversation.contains("3 bed") || conversation.contains("3-bed")) {
+                leadData.put("bedrooms", "3");
+            } else if (conversation.contains("4 bed") || conversation.contains("4-bed")) {
+                leadData.put("bedrooms", "4");
+            } else if (conversation.contains("2 bed") || conversation.contains("2-bed")) {
+                leadData.put("bedrooms", "2");
+            }
+        }
+        
+        // Extract feature preferences
+        List<String> features = new ArrayList<>();
+        if (conversation.contains("pool")) features.add("pool");
+        if (conversation.contains("garage")) features.add("garage");
+        if (conversation.contains("view")) features.add("view");
+        if (conversation.contains("yard") || conversation.contains("backyard")) features.add("yard");
+        if (conversation.contains("fireplace")) features.add("fireplace");
+        if (!features.isEmpty()) {
+            leadData.put("desired_features", String.join(", ", features));
+        }
+        
+        // Extract urgency/timeline
+        if (conversation.contains("soon") || conversation.contains("asap") || 
+            conversation.contains("urgent") || conversation.contains("immediately")) {
+            leadData.put("urgency", "high");
+        } else if (conversation.contains("few months") || conversation.contains("3-6 months") ||
+                   conversation.contains("this year")) {
+            leadData.put("urgency", "medium");
+        } else if (conversation.contains("just looking") || conversation.contains("browsing") ||
+                   conversation.contains("exploring")) {
+            leadData.put("urgency", "low");
+        }
+        
+        // Extract buyer type
+        if (conversation.contains("first time") || conversation.contains("first-time")) {
+            leadData.put("buyer_type", "first-time");
+        } else if (conversation.contains("upgrade") || conversation.contains("upgrading")) {
+            leadData.put("buyer_type", "upgrading");
+        } else if (conversation.contains("relocat") || conversation.contains("moving")) {
+            leadData.put("buyer_type", "relocating");
+        } else if (conversation.contains("investment") || conversation.contains("investor")) {
+            leadData.put("buyer_type", "investor");
+        }
+        
+        // Log lead data for review (in production, save to database)
+        if (!leadData.isEmpty()) {
+            System.out.println("=== LEAD QUALIFICATION DATA CAPTURED ===");
+            leadData.forEach((key, value) -> 
+                System.out.println("  " + key + ": " + value)
+            );
+            System.out.println("  conversation_length: " + conversationHistory.size() + " exchanges");
+            System.out.println("  timestamp: " + System.currentTimeMillis());
+            System.out.println("=========================================");
+            
+            // TODO: In production, save to database or CRM
+            // Example: leadRepository.save(new Lead(leadData));
         }
     }
     
