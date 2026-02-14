@@ -27,7 +27,7 @@ function App() {
 
     // Filter state
     const [filters, setFilters] = useState<PropertyFilters>({
-        // city: '',
+        city: '',
         state: '',
         zip: '',
         minPrice: undefined,
